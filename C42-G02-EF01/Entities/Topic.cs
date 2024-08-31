@@ -15,5 +15,7 @@ namespace C42_G02_EF01.Entities
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
+
+        public ICollection<Course> Courses { get; set; } // navigational property
     }
 }

@@ -41,32 +41,34 @@ namespace C42_G02_EF01.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("Math");
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("Top_ID")
+                    b.Property<int?>("Top_ID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Top_ID");
 
                     b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("C42_G02_EF01.Entities.Course_Inst", b =>
                 {
-                    b.Property<int>("inst_ID")
+                    b.Property<int>("Course_ID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Course_ID")
+                    b.Property<int>("inst_ID")
                         .HasColumnType("int");
 
                     b.Property<string>("evaluate")
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.HasKey("inst_ID", "Course_ID");
+                    b.HasKey("Course_ID", "inst_ID");
+
+                    b.HasIndex("inst_ID");
 
                     b.ToTable("Course_Insts");
                 });
@@ -82,7 +84,7 @@ namespace C42_G02_EF01.Migrations
                     b.Property<DateTime>("HiringDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Ins_ID")
+                    b.Property<int?>("Ins_ID")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -90,6 +92,8 @@ namespace C42_G02_EF01.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Ins_ID");
 
                     b.ToTable("Departments");
                 });
@@ -109,7 +113,7 @@ namespace C42_G02_EF01.Migrations
                     b.Property<decimal>("Bouns")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Dept_ID")
+                    b.Property<int?>("Dept_ID")
                         .HasColumnType("int");
 
                     b.Property<decimal>("HourRate")
@@ -123,6 +127,8 @@ namespace C42_G02_EF01.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("Dept_ID");
 
                     b.ToTable("Instructors");
                 });
@@ -139,6 +145,8 @@ namespace C42_G02_EF01.Migrations
                         .HasColumnType("decimal(5, 2)");
 
                     b.HasKey("stud_ID", "Course_ID");
+
+                    b.HasIndex("Course_ID");
 
                     b.ToTable("Stud_Courses");
                 });
@@ -158,7 +166,7 @@ namespace C42_G02_EF01.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<int>("Dep_Id")
+                    b.Property<int?>("Dep_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("FName")
@@ -170,6 +178,8 @@ namespace C42_G02_EF01.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Dep_Id");
 
                     b.ToTable("Students");
                 });
@@ -190,6 +200,109 @@ namespace C42_G02_EF01.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Topics");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Course", b =>
+                {
+                    b.HasOne("C42_G02_EF01.Entities.Topic", "Topic")
+                        .WithMany("Courses")
+                        .HasForeignKey("Top_ID");
+
+                    b.Navigation("Topic");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Course_Inst", b =>
+                {
+                    b.HasOne("C42_G02_EF01.Entities.Course", "Course")
+                        .WithMany("Course_Insts")
+                        .HasForeignKey("Course_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("C42_G02_EF01.Entities.Instructor", "Instructor")
+                        .WithMany("Course_Insts")
+                        .HasForeignKey("inst_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Department", b =>
+                {
+                    b.HasOne("C42_G02_EF01.Entities.Instructor", "Instructor")
+                        .WithMany()
+                        .HasForeignKey("Ins_ID");
+
+                    b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Instructor", b =>
+                {
+                    b.HasOne("C42_G02_EF01.Entities.Department", "Department")
+                        .WithMany("Instructors")
+                        .HasForeignKey("Dept_ID");
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Stud_Course", b =>
+                {
+                    b.HasOne("C42_G02_EF01.Entities.Course", "Course")
+                        .WithMany("CoursesStudent")
+                        .HasForeignKey("Course_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("C42_G02_EF01.Entities.Student", "Student")
+                        .WithMany("StudentsCourse")
+                        .HasForeignKey("stud_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Student", b =>
+                {
+                    b.HasOne("C42_G02_EF01.Entities.Department", "Department")
+                        .WithMany("Students")
+                        .HasForeignKey("Dep_Id");
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Course", b =>
+                {
+                    b.Navigation("Course_Insts");
+
+                    b.Navigation("CoursesStudent");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Department", b =>
+                {
+                    b.Navigation("Instructors");
+
+                    b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Instructor", b =>
+                {
+                    b.Navigation("Course_Insts");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Student", b =>
+                {
+                    b.Navigation("StudentsCourse");
+                });
+
+            modelBuilder.Entity("C42_G02_EF01.Entities.Topic", b =>
+                {
+                    b.Navigation("Courses");
                 });
 #pragma warning restore 612, 618
         }

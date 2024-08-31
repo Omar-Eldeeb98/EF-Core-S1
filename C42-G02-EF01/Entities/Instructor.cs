@@ -16,6 +16,10 @@ namespace C42_G02_EF01.Entities
         public decimal Salary { get; set; }
         public string Adress { get; set; }
         public decimal HourRate { get; set; }
-        public int Dept_ID { get; set; }
+        public int? Dept_ID { get; set; }
+
+        public ICollection<Course_Inst> Course_Insts { get; set; }  // navigational property
+
+        public Department Department { get; set; } // navigational property
     }
 }

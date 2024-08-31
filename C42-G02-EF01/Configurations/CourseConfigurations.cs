@@ -18,8 +18,7 @@ namespace C42_G02_EF01.Configurations
                 .UseIdentityColumn(1, 1);
 
             builder.Property(c => c.Name)
-                            .HasMaxLength(50)
-                            .HasDefaultValue("Math");
+                            .HasMaxLength(50);
 
             builder.Property(c => c.Duration)
                 .HasColumnType("nvarchar(50)");
